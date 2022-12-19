@@ -370,9 +370,6 @@ class BarChartRodData with EquatableMixin {
     );
   }
 
-  /// Determines the upward or downward direction
-  bool isUpward() => toY >= fromY;
-
   /// Copies current [BarChartRodData] to a new [BarChartRodData],
   /// and replaces provided values.
   BarChartRodData copyWith({
@@ -690,9 +687,6 @@ class BarTouchTooltipData with EquatableMixin {
   /// Controls the rotation of the tooltip.
   final double rotateAngle;
 
-  /// The tooltip border color.
-  final BorderSide tooltipBorder;
-
   /// if [BarTouchData.handleBuiltInTouches] is true,
   /// [BarChart] shows a tooltip popup on top of rods automatically when touch happens,
   /// otherwise you can show it manually using [BarChartGroupData.showingTooltipIndicators].
@@ -717,7 +711,6 @@ class BarTouchTooltipData with EquatableMixin {
     bool? fitInsideVertically,
     TooltipDirection? direction,
     double? rotateAngle,
-    BorderSide? tooltipBorder,
   })  : tooltipBgColor = tooltipBgColor ?? Colors.blueGrey.darken(15),
         tooltipRoundedRadius = tooltipRoundedRadius ?? 4,
         tooltipPadding = tooltipPadding ??
@@ -729,7 +722,6 @@ class BarTouchTooltipData with EquatableMixin {
         fitInsideVertically = fitInsideVertically ?? false,
         direction = direction ?? TooltipDirection.auto,
         rotateAngle = rotateAngle ?? 0.0,
-        tooltipBorder = tooltipBorder ?? BorderSide.none,
         super();
 
   /// Used for equality check, see [EquatableMixin].
@@ -744,7 +736,6 @@ class BarTouchTooltipData with EquatableMixin {
         fitInsideHorizontally,
         fitInsideVertically,
         rotateAngle,
-        tooltipBorder,
       ];
 }
 

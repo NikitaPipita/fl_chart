@@ -150,11 +150,7 @@ class _LineChart extends StatelessWidget {
         break;
     }
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 10,
-      child: text,
-    );
+    return Padding(child: text, padding: const EdgeInsets.only(top: 10.0));
   }
 
   SideTitles get bottomTitles => SideTitles(

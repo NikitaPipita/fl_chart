@@ -85,9 +85,11 @@ class BarChartSample6 extends StatelessWidget {
       default:
         text = "";
     }
-    return SideTitleWidget(
+    return Padding(
       child: Text(text, style: style),
-      axisSide: meta.axisSide,
+      padding: const EdgeInsets.only(
+        top: 4,
+      ),
     );
   }
 

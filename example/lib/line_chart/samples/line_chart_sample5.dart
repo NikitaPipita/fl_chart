@@ -49,9 +49,9 @@ class LineChartSample5 extends StatelessWidget {
         return Container();
     }
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
+    return Padding(
       child: Text(text, style: style),
+      padding: const EdgeInsets.only(top: 4),
     );
   }
 

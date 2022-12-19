@@ -134,9 +134,6 @@ class Utils {
     }
     final accurateInterval =
         diffInAxis == 0 ? axisViewSize : diffInAxis / allowedCount;
-    if (allowedCount <= 2) {
-      return accurateInterval;
-    }
     return roundInterval(accurateInterval);
   }
 

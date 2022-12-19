@@ -52,23 +52,16 @@ class LineChartSample7 extends StatelessWidget {
         return Container();
     }
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4,
+    return Padding(
       child: Text(text, style: style),
+      padding: const EdgeInsets.only(top: 4),
     );
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(fontSize: 10);
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: Text(
-        '\$ ${value + 0.5}',
-        style: style,
-      ),
-    );
+    return Text('\$ ${value + 0.5}', style: style);
   }
 
   @override

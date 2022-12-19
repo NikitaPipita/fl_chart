@@ -8,10 +8,6 @@ class BarChart extends ImplicitlyAnimatedWidget {
   /// Determines how the [BarChart] should be look like.
   final BarChartData data;
 
-  /// We pass this key to our renderers which are supposed to
-  /// render the chart itself (without anything around the chart).
-  final Key? chartRendererKey;
-
   /// [data] determines how the [BarChart] should be look like,
   /// when you make any change in the [BarChartData], it updates
   /// new values with animation, and duration is [swapAnimationDuration].
@@ -19,7 +15,6 @@ class BarChart extends ImplicitlyAnimatedWidget {
   /// which default is [Curves.linear].
   const BarChart(
     this.data, {
-    this.chartRendererKey,
     Key? key,
     Duration swapAnimationDuration = const Duration(milliseconds: 150),
     Curve swapAnimationCurve = Curves.linear,
@@ -53,7 +48,6 @@ class _BarChartState extends AnimatedWidgetBaseState<BarChart> {
       chart: BarChartLeaf(
         data: _withTouchedIndicators(_barChartDataTween!.evaluate(animation)),
         targetData: _withTouchedIndicators(showingData),
-        key: widget.chartRendererKey,
       ),
     );
   }

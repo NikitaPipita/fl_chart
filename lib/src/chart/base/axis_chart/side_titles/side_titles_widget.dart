@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_chart/src/extensions/bar_chart_data_extension.dart';
 import 'package:fl_chart/src/extensions/edge_insets_extension.dart';
-import 'package:fl_chart/src/extensions/fl_border_data_extension.dart';
 import 'package:fl_chart/src/extensions/fl_titles_data_extension.dart';
 import 'package:fl_chart/src/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +8,10 @@ import 'package:flutter/material.dart';
 import '../axis_chart_helper.dart';
 import 'side_titles_flex.dart';
 
+enum TitlesSide { left, top, right, bottom }
+
 class SideTitlesWidget extends StatelessWidget {
-  final AxisSide side;
+  final TitlesSide side;
   final AxisChartData axisChartData;
   final Size parentSize;
 
@@ -21,7 +22,7 @@ class SideTitlesWidget extends StatelessWidget {
     required this.parentSize,
   }) : super(key: key);
 
-  bool get isHorizontal => side == AxisSide.top || side == AxisSide.bottom;
+  bool get isHorizontal => side == TitlesSide.top || side == TitlesSide.bottom;
 
   bool get isVertical => !isHorizontal;
 
@@ -45,19 +46,20 @@ class SideTitlesWidget extends StatelessWidget {
 
   FlTitlesData get titlesData => axisChartData.titlesData;
 
-  bool get isLeftOrTop => side == AxisSide.left || side == AxisSide.top;
+  bool get isLeftOrTop => side == TitlesSide.left || side == TitlesSide.top;
 
-  bool get isRightOrBottom => side == AxisSide.right || side == AxisSide.bottom;
+  bool get isRightOrBottom =>
+      side == TitlesSide.right || side == TitlesSide.bottom;
 
   AxisTitles get axisTitles {
     switch (side) {
-      case AxisSide.left:
+      case TitlesSide.left:
         return titlesData.leftTitles;
-      case AxisSide.top:
+      case TitlesSide.top:
         return titlesData.topTitles;
-      case AxisSide.right:
+      case TitlesSide.right:
         return titlesData.rightTitles;
-      case AxisSide.bottom:
+      case TitlesSide.bottom:
         return titlesData.bottomTitles;
     }
   }
@@ -70,40 +72,36 @@ class SideTitlesWidget extends StatelessWidget {
 
   Alignment get alignment {
     switch (side) {
-      case AxisSide.left:
+      case TitlesSide.left:
         return Alignment.centerLeft;
-      case AxisSide.top:
+      case TitlesSide.top:
         return Alignment.topCenter;
-      case AxisSide.right:
+      case TitlesSide.right:
         return Alignment.centerRight;
-      case AxisSide.bottom:
+      case TitlesSide.bottom:
         return Alignment.bottomCenter;
     }
   }
 
   EdgeInsets get thisSidePadding {
-    final titlesPadding = titlesData.allSidesPadding;
-    final borderPadding = axisChartData.borderData.allSidesPadding;
     switch (side) {
-      case AxisSide.right:
-      case AxisSide.left:
-        return titlesPadding.onlyTopBottom + borderPadding.onlyTopBottom;
-      case AxisSide.top:
-      case AxisSide.bottom:
-        return titlesPadding.onlyLeftRight + borderPadding.onlyLeftRight;
+      case TitlesSide.right:
+      case TitlesSide.left:
+        return titlesData.allSidesPadding.onlyTopBottom;
+      case TitlesSide.top:
+      case TitlesSide.bottom:
+        return titlesData.allSidesPadding.onlyLeftRight;
     }
   }
 
   double get thisSidePaddingTotal {
-    final borderPadding = axisChartData.borderData.allSidesPadding;
-    final titlesPadding = titlesData.allSidesPadding;
     switch (side) {
-      case AxisSide.right:
-      case AxisSide.left:
-        return titlesPadding.vertical + borderPadding.vertical;
-      case AxisSide.top:
-      case AxisSide.bottom:
-        return titlesPadding.horizontal + borderPadding.horizontal;
+      case TitlesSide.right:
+      case TitlesSide.left:
+        return titlesData.allSidesPadding.vertical;
+      case TitlesSide.top:
+      case TitlesSide.bottom:
+        return titlesData.allSidesPadding.horizontal;
     }
   }
 
@@ -111,7 +109,6 @@ class SideTitlesWidget extends StatelessWidget {
     double axisViewSize,
     double axisMin,
     double axisMax,
-    AxisSide side,
   ) {
     List<AxisSideTitleMetaData> axisPositions;
     final interval = sideTitles.interval ??
@@ -136,11 +133,7 @@ class SideTitlesWidget extends StatelessWidget {
         interval: interval,
       );
       axisPositions = axisValues.map((axisValue) {
-        final axisDiff = axisMax - axisMin;
-        var portion = 0.0;
-        if (axisDiff > 0) {
-          portion = (axisValue - axisMin) / axisDiff;
-        }
+        var portion = (axisValue - axisMin) / (axisMax - axisMin);
         if (isVertical) {
           portion = 1 - portion;
         }
@@ -148,24 +141,23 @@ class SideTitlesWidget extends StatelessWidget {
         return AxisSideTitleMetaData(axisValue, axisLocation);
       }).toList();
     }
-    return axisPositions.map(
-      (metaData) {
-        return AxisSideTitleWidgetHolder(
-          metaData,
-          sideTitles.getTitlesWidget(
-            metaData.axisValue,
-            TitleMeta(
-              min: axisMin,
-              max: axisMax,
-              appliedInterval: interval,
-              sideTitles: sideTitles,
-              formattedValue: Utils().formatNumber(metaData.axisValue),
-              axisSide: side,
+    return axisPositions
+        .map(
+          (metaData) => AxisSideTitleWidgetHolder(
+            metaData,
+            sideTitles.getTitlesWidget(
+              metaData.axisValue,
+              TitleMeta(
+                axisMin,
+                axisMax,
+                interval,
+                sideTitles,
+                Utils().formatNumber(metaData.axisValue),
+              ),
             ),
           ),
-        );
-      },
-    ).toList();
+        )
+        .toList();
   }
 
   @override
@@ -203,7 +195,6 @@ class SideTitlesWidget extends StatelessWidget {
                   axisViewSize - thisSidePaddingTotal,
                   axisMin,
                   axisMax,
-                  side,
                 ),
               ),
             ),
@@ -221,7 +212,7 @@ class SideTitlesWidget extends StatelessWidget {
 
 class _AxisTitleWidget extends StatelessWidget {
   final AxisTitles axisTitles;
-  final AxisSide side;
+  final TitlesSide side;
   final double axisViewSize;
 
   const _AxisTitleWidget({
@@ -233,18 +224,18 @@ class _AxisTitleWidget extends StatelessWidget {
 
   int get axisNameQuarterTurns {
     switch (side) {
-      case AxisSide.right:
+      case TitlesSide.right:
         return 3;
-      case AxisSide.left:
+      case TitlesSide.left:
         return 3;
-      case AxisSide.top:
+      case TitlesSide.top:
         return 0;
-      case AxisSide.bottom:
+      case TitlesSide.bottom:
         return 0;
     }
   }
 
-  bool get isHorizontal => side == AxisSide.top || side == AxisSide.bottom;
+  bool get isHorizontal => side == TitlesSide.top || side == TitlesSide.bottom;
 
   @override
   Widget build(BuildContext context) {

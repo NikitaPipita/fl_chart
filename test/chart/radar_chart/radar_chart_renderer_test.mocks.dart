@@ -5,17 +5,15 @@
 import 'dart:typed_data' as _i7;
 import 'dart:ui' as _i2;
 
-import 'package:fl_chart/fl_chart.dart' as _i13;
+import 'package:fl_chart/fl_chart.dart' as _i12;
 import 'package:fl_chart/src/chart/base/base_chart/base_chart_painter.dart'
-    as _i12;
-import 'package:fl_chart/src/chart/radar_chart/radar_chart_painter.dart'
-    as _i10;
-import 'package:fl_chart/src/utils/canvas_wrapper.dart' as _i11;
+    as _i11;
+import 'package:fl_chart/src/chart/radar_chart/radar_chart_painter.dart' as _i9;
+import 'package:fl_chart/src/utils/canvas_wrapper.dart' as _i10;
 import 'package:flutter/foundation.dart' as _i5;
 import 'package:flutter/material.dart' as _i6;
 import 'package:flutter/rendering.dart' as _i3;
 import 'package:flutter/src/rendering/layer.dart' as _i4;
-import 'package:flutter/src/widgets/notification_listener.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:vector_math/vector_math_64.dart' as _i8;
 
@@ -437,10 +435,6 @@ class MockBuildContext extends _i1.Mock implements _i6.BuildContext {
       super.noSuchMethod(Invocation.method(#visitChildElements, [visitor]),
           returnValueForMissingStub: null);
   @override
-  void dispatchNotification(_i9.Notification? notification) => super
-      .noSuchMethod(Invocation.method(#dispatchNotification, [notification]),
-          returnValueForMissingStub: null);
-  @override
   _i5.DiagnosticsNode describeElement(String? name,
           {_i5.DiagnosticsTreeStyle? style =
               _i5.DiagnosticsTreeStyle.errorProperty}) =>
@@ -470,51 +464,51 @@ class MockBuildContext extends _i1.Mock implements _i6.BuildContext {
 /// A class which mocks [RadarChartPainter].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockRadarChartPainter extends _i1.Mock implements _i10.RadarChartPainter {
+class MockRadarChartPainter extends _i1.Mock implements _i9.RadarChartPainter {
   MockRadarChartPainter() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  set dataSetsPosition(List<_i10.RadarDataSetsPosition>? _dataSetsPosition) =>
+  set dataSetsPosition(List<_i9.RadarDataSetsPosition>? _dataSetsPosition) =>
       super.noSuchMethod(
           Invocation.setter(#dataSetsPosition, _dataSetsPosition),
           returnValueForMissingStub: null);
   @override
-  void paint(_i6.BuildContext? context, _i11.CanvasWrapper? canvasWrapper,
-          _i12.PaintHolder<_i13.RadarChartData>? holder) =>
+  void paint(_i6.BuildContext? context, _i10.CanvasWrapper? canvasWrapper,
+          _i11.PaintHolder<_i12.RadarChartData>? holder) =>
       super.noSuchMethod(
           Invocation.method(#paint, [context, canvasWrapper, holder]),
           returnValueForMissingStub: null);
   @override
-  void drawTicks(_i6.BuildContext? context, _i11.CanvasWrapper? canvasWrapper,
-          _i12.PaintHolder<_i13.RadarChartData>? holder) =>
+  void drawTicks(_i6.BuildContext? context, _i10.CanvasWrapper? canvasWrapper,
+          _i11.PaintHolder<_i12.RadarChartData>? holder) =>
       super.noSuchMethod(
           Invocation.method(#drawTicks, [context, canvasWrapper, holder]),
           returnValueForMissingStub: null);
   @override
-  void drawGrids(_i11.CanvasWrapper? canvasWrapper,
-          _i12.PaintHolder<_i13.RadarChartData>? holder) =>
+  void drawGrids(_i10.CanvasWrapper? canvasWrapper,
+          _i11.PaintHolder<_i12.RadarChartData>? holder) =>
       super.noSuchMethod(Invocation.method(#drawGrids, [canvasWrapper, holder]),
           returnValueForMissingStub: null);
   @override
-  void drawTitles(_i6.BuildContext? context, _i11.CanvasWrapper? canvasWrapper,
-          _i12.PaintHolder<_i13.RadarChartData>? holder) =>
+  void drawTitles(_i6.BuildContext? context, _i10.CanvasWrapper? canvasWrapper,
+          _i11.PaintHolder<_i12.RadarChartData>? holder) =>
       super.noSuchMethod(
           Invocation.method(#drawTitles, [context, canvasWrapper, holder]),
           returnValueForMissingStub: null);
   @override
-  void drawDataSets(_i11.CanvasWrapper? canvasWrapper,
-          _i12.PaintHolder<_i13.RadarChartData>? holder) =>
+  void drawDataSets(_i10.CanvasWrapper? canvasWrapper,
+          _i11.PaintHolder<_i12.RadarChartData>? holder) =>
       super.noSuchMethod(
           Invocation.method(#drawDataSets, [canvasWrapper, holder]),
           returnValueForMissingStub: null);
   @override
-  _i13.RadarTouchedSpot? handleTouch(_i2.Offset? touchedPoint,
-          _i2.Size? viewSize, _i12.PaintHolder<_i13.RadarChartData>? holder) =>
+  _i12.RadarTouchedSpot? handleTouch(_i2.Offset? touchedPoint,
+          _i2.Size? viewSize, _i11.PaintHolder<_i12.RadarChartData>? holder) =>
       (super.noSuchMethod(
               Invocation.method(#handleTouch, [touchedPoint, viewSize, holder]))
-          as _i13.RadarTouchedSpot?);
+          as _i12.RadarTouchedSpot?);
   @override
   double radarCenterY(_i2.Size? size) =>
       (super.noSuchMethod(Invocation.method(#radarCenterY, [size]),
@@ -528,10 +522,10 @@ class MockRadarChartPainter extends _i1.Mock implements _i10.RadarChartPainter {
       (super.noSuchMethod(Invocation.method(#radarRadius, [size]),
           returnValue: 0.0) as double);
   @override
-  List<_i10.RadarDataSetsPosition> calculateDataSetsPosition(
-          _i2.Size? viewSize, _i12.PaintHolder<_i13.RadarChartData>? holder) =>
+  List<_i9.RadarDataSetsPosition> calculateDataSetsPosition(
+          _i2.Size? viewSize, _i11.PaintHolder<_i12.RadarChartData>? holder) =>
       (super.noSuchMethod(
               Invocation.method(#calculateDataSetsPosition, [viewSize, holder]),
-              returnValue: <_i10.RadarDataSetsPosition>[])
-          as List<_i10.RadarDataSetsPosition>);
+              returnValue: <_i9.RadarDataSetsPosition>[])
+          as List<_i9.RadarDataSetsPosition>);
 }

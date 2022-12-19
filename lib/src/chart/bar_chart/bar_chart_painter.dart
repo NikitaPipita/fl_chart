@@ -14,10 +14,7 @@ import '../../utils/utils.dart';
 
 /// Paints [BarChartData] in the canvas, it can be used in a [CustomPainter]
 class BarChartPainter extends AxisChartPainter<BarChartData> {
-  late Paint _barPaint,
-      _barStrokePaint,
-      _bgTouchTooltipPaint,
-      _borderTouchTooltipPaint;
+  late Paint _barPaint, _barStrokePaint, _bgTouchTooltipPaint;
 
   List<GroupBarsPosition>? _groupBarsPosition;
 
@@ -36,11 +33,6 @@ class BarChartPainter extends AxisChartPainter<BarChartData> {
     _bgTouchTooltipPaint = Paint()
       ..style = PaintingStyle.fill
       ..color = Colors.white;
-
-    _borderTouchTooltipPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..color = Colors.transparent
-      ..strokeWidth = 1.0;
   }
 
   /// Paints [BarChartData] into the provided canvas.
@@ -352,7 +344,7 @@ class BarChartPainter extends AxisChartPainter<BarChartData> {
     final barBottomY = max(zeroY, barOffset.dy);
     final drawTooltipOnTop = tooltipData.direction == TooltipDirection.top ||
         (tooltipData.direction == TooltipDirection.auto &&
-            showOnRodData.isUpward());
+            showOnRodData.toY >= 0);
     final tooltipTop = drawTooltipOnTop
         ? barTopY - tooltipHeight - tooltipData.tooltipMargin
         : barBottomY + tooltipData.tooltipMargin;
@@ -428,12 +420,6 @@ class BarChartPainter extends AxisChartPainter<BarChartData> {
       rect.center.dx - (tp.width / 2),
       rect.topCenter.dy + top - textRotationOffset.dy + rectRotationOffset.dy,
     );
-
-    if (tooltipData.tooltipBorder != BorderSide.none) {
-      _borderTouchTooltipPaint.color = tooltipData.tooltipBorder.color;
-      _borderTouchTooltipPaint.strokeWidth = tooltipData.tooltipBorder.width;
-    }
-
     canvasWrapper.drawRotated(
       size: rect.size,
       rotationOffset: rectRotationOffset,
@@ -441,7 +427,6 @@ class BarChartPainter extends AxisChartPainter<BarChartData> {
       angle: rotateAngle,
       drawCallback: () {
         canvasWrapper.drawRRect(roundedRect, _bgTouchTooltipPaint);
-        canvasWrapper.drawRRect(roundedRect, _borderTouchTooltipPaint);
         canvasWrapper.drawText(tp, drawOffset);
       },
     );
@@ -540,29 +525,15 @@ class BarChartPainter extends AxisChartPainter<BarChartData> {
         double barTopY;
         double barBotY;
 
-        final isUpward = targetData.barGroups[i].barRods[j].isUpward();
-        if (isUpward) {
+        final isPositive = targetData.barGroups[i].barRods[j].toY > 0;
+        if (isPositive) {
           barTopY = getPixelY(
-            targetData.barGroups[i].barRods[j].toY,
-            viewSize,
-            holder,
-          );
-          barBotY = getPixelY(
-            targetData.barGroups[i].barRods[j].fromY,
-            viewSize,
-            holder,
-          );
+              targetData.barGroups[i].barRods[j].toY, viewSize, holder);
+          barBotY = getPixelY(0, viewSize, holder);
         } else {
-          barTopY = getPixelY(
-            targetData.barGroups[i].barRods[j].fromY,
-            viewSize,
-            holder,
-          );
+          barTopY = getPixelY(0, viewSize, holder);
           barBotY = getPixelY(
-            targetData.barGroups[i].barRods[j].toY,
-            viewSize,
-            holder,
-          );
+              targetData.barGroups[i].barRods[j].toY, viewSize, holder);
         }
 
         final backDrawBarY = getPixelY(
@@ -575,19 +546,12 @@ class BarChartPainter extends AxisChartPainter<BarChartData> {
                 barX + halfBarWidth + touchExtraThreshold.right) &&
             (touchedPoint.dx >= barX - halfBarWidth - touchExtraThreshold.left);
 
-        bool isYInBarBounds;
-        if (isUpward) {
-          isYInBarBounds =
-              (touchedPoint.dy <= barBotY + touchExtraThreshold.bottom) &&
-                  (touchedPoint.dy >= barTopY - touchExtraThreshold.top);
-        } else {
-          isYInBarBounds =
-              (touchedPoint.dy >= barTopY - touchExtraThreshold.top) &&
-                  (touchedPoint.dy <= barBotY + touchExtraThreshold.bottom);
-        }
+        final isYInBarBounds =
+            (touchedPoint.dy <= barBotY + touchExtraThreshold.bottom) &&
+                (touchedPoint.dy >= barTopY - touchExtraThreshold.top);
 
         bool isYInBarBackDrawBounds;
-        if (isUpward) {
+        if (isPositive) {
           isYInBarBackDrawBounds =
               (touchedPoint.dy <= barBotY + touchExtraThreshold.bottom) &&
                   (touchedPoint.dy >= backDrawBarY - touchExtraThreshold.top);

@@ -13,15 +13,15 @@ void main() {
   const tolerance = 0.001;
 
   test('changeInstance', () {
-    Utils mockUtils = MockUtils();
+    Utils _mockUtils = MockUtils();
     Utils realUtils = Utils();
     expect(Utils(), realUtils);
-    Utils.changeInstance(mockUtils);
-    expect(Utils(), mockUtils);
+    Utils.changeInstance(_mockUtils);
+    expect(Utils(), _mockUtils);
     expect(Utils() != realUtils, true);
     Utils.changeInstance(realUtils);
     expect(Utils(), realUtils);
-    expect(Utils() != mockUtils, true);
+    expect(Utils() != _mockUtils, true);
   });
 
   test('test degrees to radians', () {
@@ -216,15 +216,15 @@ void main() {
 
   group('test getThemeAwareTextStyle', () {
     test('test 1', () {
-      final mockBuildContext = MockBuildContext();
-      const defaultTextStyle = DefaultTextStyle.fallback();
+      final _mockBuildContext = MockBuildContext();
+      const _defaultTextStyle = DefaultTextStyle.fallback();
 
       var callCount = 0;
-      when(mockBuildContext.dependOnInheritedWidgetOfExactType())
+      when(_mockBuildContext.dependOnInheritedWidgetOfExactType())
           .thenAnswer((realInvocation) {
         if (callCount == 0) {
           callCount++;
-          return defaultTextStyle;
+          return _defaultTextStyle;
         } else {
           return MediaQuery(
             data: const MediaQueryData(boldText: false),
@@ -233,21 +233,21 @@ void main() {
         }
       });
       expect(
-        Utils().getThemeAwareTextStyle(mockBuildContext, null),
-        defaultTextStyle.style,
+        Utils().getThemeAwareTextStyle(_mockBuildContext, null),
+        _defaultTextStyle.style,
       );
     });
 
     test('test 2', () {
-      final mockBuildContext = MockBuildContext();
-      const defaultTextStyle = DefaultTextStyle.fallback();
+      final _mockBuildContext = MockBuildContext();
+      const _defaultTextStyle = DefaultTextStyle.fallback();
 
       var callCount = 0;
-      when(mockBuildContext.dependOnInheritedWidgetOfExactType())
+      when(_mockBuildContext.dependOnInheritedWidgetOfExactType())
           .thenAnswer((realInvocation) {
         if (callCount == 0) {
           callCount++;
-          return defaultTextStyle;
+          return _defaultTextStyle;
         } else {
           return MediaQuery(
             data: const MediaQueryData(boldText: true),
@@ -258,7 +258,7 @@ void main() {
       expect(
         Utils()
             .getThemeAwareTextStyle(
-              mockBuildContext,
+              _mockBuildContext,
               MockData.textStyle1,
             )
             .fontWeight,

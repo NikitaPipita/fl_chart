@@ -21,8 +21,7 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       _barAreaLinesPaint,
       _clearBarAreaPaint,
       _touchLinePaint,
-      _bgTouchTooltipPaint,
-      _borderTouchTooltipPaint;
+      _bgTouchTooltipPaint;
 
   /// Paints [dataList] into canvas, it is the animating [LineChartData],
   /// [targetData] is the animation's target and remains the same
@@ -51,11 +50,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
     _bgTouchTooltipPaint = Paint()
       ..style = PaintingStyle.fill
       ..color = Colors.white;
-
-    _borderTouchTooltipPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..color = Colors.transparent
-      ..strokeWidth = 1.0;
   }
 
   /// Paints [LineChartData] into the provided canvas.
@@ -87,8 +81,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       super.drawExtraLines(context, canvasWrapper, holder);
     }
 
-    List<LineIndexDrawingInfo> lineIndexDrawingInfo = [];
-
     /// draw each line independently on the chart
     for (var i = 0; i < data.lineBarsData.length; i++) {
       final barData = data.lineBarsData[i];
@@ -104,29 +96,8 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
         super.drawExtraLines(context, canvasWrapper, holder);
       }
 
-      final indicatorsData = data.lineTouchData
-          .getTouchedSpotIndicator(barData, barData.showingIndicators);
-
-      if (indicatorsData.length != barData.showingIndicators.length) {
-        throw Exception(
-            'indicatorsData and touchedSpotOffsets size should be same');
-      }
-
-      for (var j = 0; j < barData.showingIndicators.length; j++) {
-        final indicatorData = indicatorsData[j];
-        final index = barData.showingIndicators[j];
-        final spot = barData.spots[index];
-
-        if (indicatorData == null) {
-          continue;
-        }
-        lineIndexDrawingInfo.add(
-          LineIndexDrawingInfo(barData, i, spot, index, indicatorData),
-        );
-      }
+      drawTouchedSpotsIndicator(canvasWrapper, barData, holder);
     }
-
-    drawTouchedSpotsIndicator(canvasWrapper, lineIndexDrawingInfo, holder);
 
     if (data.clipData.any) {
       canvasWrapper.restore();
@@ -313,25 +284,36 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
   @visibleForTesting
   void drawTouchedSpotsIndicator(
     CanvasWrapper canvasWrapper,
-    List<LineIndexDrawingInfo> lineIndexDrawingInfo,
+    LineChartBarData barData,
     PaintHolder<LineChartData> holder,
   ) {
-    if (lineIndexDrawingInfo.isEmpty) {
+    if (barData.showingIndicators.isEmpty) {
       return;
     }
     final viewSize = canvasWrapper.size;
 
-    lineIndexDrawingInfo.sort((a, b) => b.spot.y.compareTo(a.spot.y));
+    final barXDelta = getBarLineXLength(barData, viewSize, holder);
 
-    for (final info in lineIndexDrawingInfo) {
-      final barData = info.line;
-      final barXDelta = getBarLineXLength(barData, viewSize, holder);
+    final data = holder.data;
 
-      final data = holder.data;
+    // Todo technical debt, we can read the TouchedSpotIndicatorData directly,
+    // Todo instead of mapping indexes to TouchedSpotIndicatorData
+    final indicatorsData = data.lineTouchData
+        .getTouchedSpotIndicator(barData, barData.showingIndicators);
 
-      final index = info.spotIndex;
-      final spot = info.spot;
-      final indicatorData = info.indicatorData;
+    if (indicatorsData.length != barData.showingIndicators.length) {
+      throw Exception(
+          'indicatorsData and touchedSpotOffsets size should be same');
+    }
+
+    for (var i = 0; i < barData.showingIndicators.length; i++) {
+      final indicatorData = indicatorsData[i];
+      final index = barData.showingIndicators[i];
+      final spot = barData.spots[index];
+
+      if (indicatorData == null) {
+        continue;
+      }
 
       final touchedSpot = Offset(getPixelX(spot.x, viewSize, holder),
           getPixelY(spot.y, viewSize, holder));
@@ -795,8 +777,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
 
     _barPaint.strokeCap =
         barData.isStrokeCapRound ? StrokeCap.round : StrokeCap.butt;
-    _barPaint.strokeJoin =
-        barData.isStrokeJoinRound ? StrokeJoin.round : StrokeJoin.miter;
     _barPaint.color = barData.shadow.color;
     _barPaint.shader = null;
     _barPaint.strokeWidth = barData.barWidth;
@@ -829,8 +809,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
 
     _barPaint.strokeCap =
         barData.isStrokeCapRound ? StrokeCap.round : StrokeCap.butt;
-    _barPaint.strokeJoin =
-        barData.isStrokeJoinRound ? StrokeJoin.round : StrokeJoin.miter;
 
     final rectAroundTheLine = Rect.fromLTRB(
       getPixelX(barData.mostLeftSpot.x, viewSize, holder),
@@ -1001,11 +979,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
     final textRotationOffset =
         Utils().calculateRotationOffset(rect.size, rotateAngle);
 
-    if (tooltipData.tooltipBorder != BorderSide.none) {
-      _borderTouchTooltipPaint.color = tooltipData.tooltipBorder.color;
-      _borderTouchTooltipPaint.strokeWidth = tooltipData.tooltipBorder.width;
-    }
-
     canvasWrapper.drawRotated(
       size: rect.size,
       rotationOffset: rectRotationOffset,
@@ -1013,7 +986,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       angle: rotateAngle,
       drawCallback: () {
         canvasWrapper.drawRRect(roundedRect, _bgTouchTooltipPaint);
-        canvasWrapper.drawRRect(roundedRect, _borderTouchTooltipPaint);
       },
     );
 
@@ -1154,21 +1126,4 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       return null;
     }
   }
-}
-
-@visibleForTesting
-class LineIndexDrawingInfo {
-  final LineChartBarData line;
-  final int lineIndex;
-  final FlSpot spot;
-  final int spotIndex;
-  final TouchedSpotIndicatorData indicatorData;
-
-  LineIndexDrawingInfo(
-    this.line,
-    this.lineIndex,
-    this.spot,
-    this.spotIndex,
-    this.indicatorData,
-  );
 }

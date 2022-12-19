@@ -1,7 +1,7 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_chart/src/extensions/fl_titles_data_extension.dart';
 import 'package:flutter/material.dart';
 
+import 'axis_chart_data.dart';
 import 'side_titles/side_titles_widget.dart';
 
 class AxisChartScaffoldWidget extends StatelessWidget {
@@ -52,11 +52,8 @@ class AxisChartScaffoldWidget extends StatelessWidget {
 
   List<Widget> stackWidgets(BoxConstraints constraints) {
     List<Widget> widgets = [
-      Container(
-        margin: data.titlesData.allSidesPadding,
-        decoration: BoxDecoration(
-          border: data.borderData.isVisible() ? data.borderData.border : null,
-        ),
+      Padding(
+        padding: data.titlesData.allSidesPadding,
         child: chart,
       )
     ];
@@ -67,7 +64,7 @@ class AxisChartScaffoldWidget extends StatelessWidget {
       widgets.insert(
         insertIndex(data.titlesData.leftTitles.drawBelowEverything),
         SideTitlesWidget(
-          side: AxisSide.left,
+          side: TitlesSide.left,
           axisChartData: data,
           parentSize: constraints.biggest,
         ),
@@ -78,7 +75,7 @@ class AxisChartScaffoldWidget extends StatelessWidget {
       widgets.insert(
         insertIndex(data.titlesData.topTitles.drawBelowEverything),
         SideTitlesWidget(
-          side: AxisSide.top,
+          side: TitlesSide.top,
           axisChartData: data,
           parentSize: constraints.biggest,
         ),
@@ -89,7 +86,7 @@ class AxisChartScaffoldWidget extends StatelessWidget {
       widgets.insert(
         insertIndex(data.titlesData.rightTitles.drawBelowEverything),
         SideTitlesWidget(
-          side: AxisSide.right,
+          side: TitlesSide.right,
           axisChartData: data,
           parentSize: constraints.biggest,
         ),
@@ -100,7 +97,7 @@ class AxisChartScaffoldWidget extends StatelessWidget {
       widgets.insert(
         insertIndex(data.titlesData.bottomTitles.drawBelowEverything),
         SideTitlesWidget(
-          side: AxisSide.bottom,
+          side: TitlesSide.bottom,
           axisChartData: data,
           parentSize: constraints.biggest,
         ),

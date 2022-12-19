@@ -67,8 +67,8 @@ class _LineChartSample8State extends State<LineChartSample8> {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(color: Colors.black87, fontSize: 10);
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
       child: Text(meta.formattedValue, style: style),
     );
   }
@@ -96,8 +96,8 @@ class _LineChartSample8State extends State<LineChartSample8> {
       default:
         throw StateError("Invalid");
     }
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
       child: Icon(
         icon,
         color: color,

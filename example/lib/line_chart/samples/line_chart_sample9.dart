@@ -16,9 +16,8 @@ class LineChartSample9 extends StatelessWidget {
       fontWeight: FontWeight.bold,
       fontSize: 18,
     );
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 16,
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
       child: Text(meta.formattedValue, style: style),
     );
   }
@@ -29,9 +28,8 @@ class LineChartSample9 extends StatelessWidget {
       fontWeight: FontWeight.bold,
       fontSize: 18,
     );
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 16,
+    return Padding(
+      padding: const EdgeInsets.only(right: 16.0),
       child: Text(meta.formattedValue, style: style),
     );
   }

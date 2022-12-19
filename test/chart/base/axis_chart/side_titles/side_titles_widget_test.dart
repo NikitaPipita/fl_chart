@@ -205,7 +205,7 @@ void main() {
                 width: viewSize.width,
                 height: viewSize.height,
                 child: SideTitlesWidget(
-                  side: AxisSide.left,
+                  side: TitlesSide.left,
                   axisChartData: lineChartDataWithNoTitles,
                   parentSize: viewSize,
                 ),
@@ -222,7 +222,7 @@ void main() {
   testWidgets(
     'LineChart with all titles',
     (WidgetTester tester) async {
-      Future checkSide(AxisSide side) async {
+      Future checkSide(TitlesSide side) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -243,16 +243,16 @@ void main() {
 
         String axisName;
         switch (side) {
-          case AxisSide.left:
+          case TitlesSide.left:
             axisName = 'Left';
             break;
-          case AxisSide.top:
+          case TitlesSide.top:
             axisName = 'Top';
             break;
-          case AxisSide.right:
+          case TitlesSide.right:
             axisName = 'Right';
             break;
-          case AxisSide.bottom:
+          case TitlesSide.bottom:
             axisName = 'Bottom';
             break;
           default:
@@ -264,10 +264,10 @@ void main() {
         }
       }
 
-      await checkSide(AxisSide.left);
-      await checkSide(AxisSide.top);
-      await checkSide(AxisSide.right);
-      await checkSide(AxisSide.bottom);
+      await checkSide(TitlesSide.left);
+      await checkSide(TitlesSide.top);
+      await checkSide(TitlesSide.right);
+      await checkSide(TitlesSide.bottom);
     },
   );
 
@@ -282,7 +282,7 @@ void main() {
                 width: viewSize.width,
                 height: viewSize.height,
                 child: SideTitlesWidget(
-                  side: AxisSide.left,
+                  side: TitlesSide.left,
                   axisChartData: lineChartDataWithOnlyLeftTitles,
                   parentSize: viewSize,
                 ),
@@ -311,7 +311,7 @@ void main() {
                 width: viewSize.width,
                 height: viewSize.height,
                 child: SideTitlesWidget(
-                  side: AxisSide.left,
+                  side: TitlesSide.left,
                   axisChartData: lineChartDataWithOnlyLeftTitlesWithoutAxisName,
                   parentSize: viewSize,
                 ),
@@ -339,7 +339,7 @@ void main() {
                 width: viewSize.width,
                 height: viewSize.height,
                 child: SideTitlesWidget(
-                  side: AxisSide.bottom,
+                  side: TitlesSide.bottom,
                   axisChartData: barChartDataWithOnlyBottomTitles,
                   parentSize: viewSize,
                 ),
@@ -368,7 +368,7 @@ void main() {
                 width: viewSize.width,
                 height: viewSize.height,
                 child: SideTitlesWidget(
-                  side: AxisSide.right,
+                  side: TitlesSide.right,
                   axisChartData: barChartDataWithOnlyRightTitles,
                   parentSize: viewSize,
                 ),
