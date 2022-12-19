@@ -194,6 +194,31 @@ void main() {
     ),
   );
 
+  final barChartDataWithEmptyGroups = BarChartData(
+    barGroups: [],
+    titlesData: FlTitlesData(
+      show: true,
+      leftTitles: AxisTitles(),
+      topTitles: AxisTitles(),
+      rightTitles: AxisTitles(
+        axisNameWidget: const Icon(Icons.arrow_right),
+        sideTitles: SideTitles(
+          showTitles: true,
+          interval: 1,
+          getTitlesWidget: (value, meta) {
+            return TextButton(
+              onPressed: () {},
+              child: Text(
+                value.toInt().toString(),
+              ),
+            );
+          },
+        ),
+      ),
+      bottomTitles: AxisTitles(),
+    ),
+  );
+
   testWidgets(
     'LineChart with no titles',
     (WidgetTester tester) async {
@@ -222,7 +247,7 @@ void main() {
   testWidgets(
     'LineChart with all titles',
     (WidgetTester tester) async {
-      Future checkSide(AxisSide side) async {
+      Future<void> checkSide(AxisSide side) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -259,7 +284,7 @@ void main() {
             throw StateError('Invalid');
         }
         expect(find.text('$axisName Titles'), findsOneWidget);
-        for (int i = 0; i <= 10; i++) {
+        for (var i = 0; i <= 10; i++) {
           expect(find.text('${axisName.characters.first}-$i'), findsOneWidget);
         }
       }
@@ -292,7 +317,7 @@ void main() {
         ),
       );
       expect(find.text('Left Titles'), findsOneWidget);
-      for (int i = 0; i <= 10; i++) {
+      for (var i = 0; i <= 10; i++) {
         expect(find.text('L-$i'), findsOneWidget);
       }
 
@@ -320,7 +345,7 @@ void main() {
           ),
         ),
       );
-      for (int i = 0; i <= 10; i++) {
+      for (var i = 0; i <= 10; i++) {
         expect(find.text('L-$i'), findsOneWidget);
       }
 
@@ -379,10 +404,37 @@ void main() {
       );
 
       expect(find.byIcon(Icons.arrow_right), findsOneWidget);
-      for (int i = 0; i <= 10; i++) {
+      for (var i = 0; i <= 10; i++) {
         expect(find.text('$i'), findsOneWidget);
       }
       expect(find.byType(TextButton), findsNWidgets(11));
+    },
+  );
+
+  testWidgets(
+    'BarChart with empty bars',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: viewSize.width,
+                height: viewSize.height,
+                child: SideTitlesWidget(
+                  side: AxisSide.right,
+                  axisChartData: barChartDataWithEmptyGroups,
+                  parentSize: viewSize,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.arrow_right), findsOneWidget);
+      expect(find.byType(Text), findsOneWidget);
+      expect(find.byType(TextButton), findsOneWidget);
     },
   );
 }

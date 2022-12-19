@@ -39,27 +39,22 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
 
   AxisChartData({
     FlGridData? gridData,
-    required FlTitlesData titlesData,
+    required this.titlesData,
     RangeAnnotations? rangeAnnotations,
-    required double minX,
-    required double maxX,
+    required this.minX,
+    required this.maxX,
     double? baselineX,
-    required double minY,
-    required double maxY,
+    required this.minY,
+    required this.maxY,
     double? baselineY,
     FlClipData? clipData,
     Color? backgroundColor,
-    FlBorderData? borderData,
-    required FlTouchData touchData,
+    super.borderData,
+    required super.touchData,
     ExtraLinesData? extraLinesData,
   })  : gridData = gridData ?? FlGridData(),
-        titlesData = titlesData,
         rangeAnnotations = rangeAnnotations ?? RangeAnnotations(),
-        minX = minX,
-        maxX = maxX,
         baselineX = baselineX ?? 0,
-        minY = minY,
-        maxY = maxY,
         baselineY = baselineY ?? 0,
         clipData = clipData ?? FlClipData.none(),
         backgroundColor = backgroundColor ?? Colors.transparent,
@@ -94,6 +89,15 @@ enum AxisSide { left, top, right, bottom }
 
 /// Contains meta information about the drawing title.
 class TitleMeta {
+  TitleMeta({
+    required this.min,
+    required this.max,
+    required this.appliedInterval,
+    required this.sideTitles,
+    required this.formattedValue,
+    required this.axisSide,
+  });
+
   /// min axis value
   final double min;
 
@@ -111,15 +115,6 @@ class TitleMeta {
 
   /// Determines the axis side of titles (left, top, right, bottom)
   final AxisSide axisSide;
-
-  TitleMeta({
-    required this.min,
-    required this.max,
-    required this.appliedInterval,
-    required this.sideTitles,
-    required this.formattedValue,
-    required this.axisSide,
-  });
 }
 
 /// It gives you the axis value and gets a String value based on it.
@@ -139,21 +134,6 @@ Widget defaultGetTitle(double value, TitleMeta meta) {
 
 /// Holds data for showing label values on axis numbers
 class SideTitles with EquatableMixin {
-  /// Determines showing or hiding this side titles
-  final bool showTitles;
-
-  /// You can override it to pass your custom widget to show in each axis value
-  /// We recommend you to use [SideTitleWidget].
-  final GetTitleWidgetFunction getTitlesWidget;
-
-  /// It determines the maximum space that your titles need,
-  /// (All titles will stretch using this value)
-  final double reservedSize;
-
-  /// Texts are showing with provided [interval]. If you don't provide anything,
-  /// we try to find a suitable value to set as [interval] under the hood.
-  final double? interval;
-
   /// It draws some title on an axis, per axis values,
   /// [showTitles] determines showing or hiding this side,
   ///
@@ -173,15 +153,29 @@ class SideTitles with EquatableMixin {
     bool? showTitles,
     GetTitleWidgetFunction? getTitlesWidget,
     double? reservedSize,
-    double? interval,
+    this.interval,
   })  : showTitles = showTitles ?? false,
         getTitlesWidget = getTitlesWidget ?? defaultGetTitle,
-        reservedSize = reservedSize ?? 22,
-        interval = interval {
+        reservedSize = reservedSize ?? 22 {
     if (interval == 0) {
       throw ArgumentError("SideTitles.interval couldn't be zero");
     }
   }
+
+  /// Determines showing or hiding this side titles
+  final bool showTitles;
+
+  /// You can override it to pass your custom widget to show in each axis value
+  /// We recommend you to use [SideTitleWidget].
+  final GetTitleWidgetFunction getTitlesWidget;
+
+  /// It determines the maximum space that your titles need,
+  /// (All titles will stretch using this value)
+  final double reservedSize;
+
+  /// Texts are showing with provided [interval]. If you don't provide anything,
+  /// we try to find a suitable value to set as [interval] under the hood.
+  final double? interval;
 
   /// Lerps a [SideTitles] based on [t] value, check [Tween.lerp].
   static SideTitles lerp(SideTitles a, SideTitles b, double t) {
@@ -221,6 +215,21 @@ class SideTitles with EquatableMixin {
 
 /// Holds data for showing each side titles (left, top, right, bottom)
 class AxisTitles with EquatableMixin {
+  /// you can provide [axisName] if you want to show a general
+  /// label on this axis,
+  ///
+  /// [axisNameSize] determines the maximum size that [axisName] can use
+  ///
+  /// [sideTitles] property is responsible to show your axis side labels
+  AxisTitles({
+    this.axisNameWidget,
+    double? axisNameSize,
+    SideTitles? sideTitles,
+    bool? drawBehindEverything,
+  })  : axisNameSize = axisNameSize ?? 16,
+        sideTitles = sideTitles ?? SideTitles(),
+        drawBelowEverything = drawBehindEverything ?? false;
+
   /// Determines the size of [axisName]
   final double axisNameSize;
 
@@ -242,22 +251,6 @@ class AxisTitles with EquatableMixin {
   /// If there is something to show as sideTitles, it returns true
   bool get showSideTitles =>
       sideTitles.showTitles && sideTitles.reservedSize != 0;
-
-  /// you can provide [axisName] if you want to show a general
-  /// label on this axis,
-  ///
-  /// [axisNameSize] determines the maximum size that [axisName] can use
-  ///
-  /// [sideTitles] property is responsible to show your axis side labels
-  AxisTitles({
-    Widget? axisNameWidget,
-    double? axisNameSize,
-    SideTitles? sideTitles,
-    bool? drawBehindEverything,
-  })  : axisNameWidget = axisNameWidget,
-        axisNameSize = axisNameSize ?? 16,
-        sideTitles = sideTitles ?? SideTitles(),
-        drawBelowEverything = drawBehindEverything ?? false;
 
   /// Lerps a [AxisTitles] based on [t] value, check [Tween.lerp].
   static AxisTitles lerp(AxisTitles a, AxisTitles b, double t) {
@@ -297,10 +290,6 @@ class AxisTitles with EquatableMixin {
 
 /// Holds data for showing titles on each side of charts.
 class FlTitlesData with EquatableMixin {
-  final bool show;
-
-  final AxisTitles leftTitles, topTitles, rightTitles, bottomTitles;
-
   /// [show] determines showing or hiding all titles,
   /// [leftTitles], [topTitles], [rightTitles], [bottomTitles] defines
   /// side titles of left, top, right, bottom sides respectively.
@@ -339,6 +328,12 @@ class FlTitlesData with EquatableMixin {
                 showTitles: true,
               ),
             );
+  final bool show;
+
+  final AxisTitles leftTitles;
+  final AxisTitles topTitles;
+  final AxisTitles rightTitles;
+  final AxisTitles bottomTitles;
 
   /// Lerps a [FlTitlesData] based on [t] value, check [Tween.lerp].
   static FlTitlesData lerp(FlTitlesData a, FlTitlesData b, double t) {
@@ -382,17 +377,14 @@ class FlTitlesData with EquatableMixin {
 
 /// Represents a conceptual position in cartesian (axis based) space.
 class FlSpot with EquatableMixin {
-  final double x;
-  final double y;
-
   /// [x] determines cartesian (axis based) horizontally position
   /// 0 means most left point of the chart
   ///
   /// [y] determines cartesian (axis based) vertically position
   /// 0 means most bottom point of the chart
-  const FlSpot(double x, double y)
-      : x = x,
-        y = y;
+  const FlSpot(this.x, this.y);
+  final double x;
+  final double y;
 
   /// Copies current [FlSpot] to a new [FlSpot],
   /// and replaces provided values.
@@ -448,6 +440,53 @@ class FlSpot with EquatableMixin {
 
 /// Responsible to hold grid data,
 class FlGridData with EquatableMixin {
+  /// Responsible for rendering grid lines behind the content of charts,
+  /// [show] determines showing or hiding all grids,
+  ///
+  /// [AxisChartPainter] draws horizontal lines from left to right of the chart,
+  /// with increasing y value, it increases by [horizontalInterval].
+  /// Representation of each line determines by [getDrawingHorizontalLine] callback,
+  /// it gives you a double value (in the y axis), and you should return a [FlLine] that represents
+  /// a horizontal line.
+  /// You are allowed to show or hide any horizontal line, using [checkToShowHorizontalLine] callback,
+  /// it gives you a double value (in the y axis), and you should return a boolean that determines
+  /// showing or hiding specified line.
+  /// or you can hide all horizontal lines by setting [drawHorizontalLine] false.
+  ///
+  /// [AxisChartPainter] draws vertical lines from bottom to top of the chart,
+  /// with increasing x value, it increases by [verticalInterval].
+  /// Representation of each line determines by [getDrawingVerticalLine] callback,
+  /// it gives you a double value (in the x axis), and you should return a [FlLine] that represents
+  /// a horizontal line.
+  /// You are allowed to show or hide any vertical line, using [checkToShowVerticalLine] callback,
+  /// it gives you a double value (in the x axis), and you should return a boolean that determines
+  /// showing or hiding specified line.
+  /// or you can hide all vertical lines by setting [drawVerticalLine] false.
+  FlGridData({
+    bool? show,
+    bool? drawHorizontalLine,
+    this.horizontalInterval,
+    GetDrawingGridLine? getDrawingHorizontalLine,
+    CheckToShowGrid? checkToShowHorizontalLine,
+    bool? drawVerticalLine,
+    this.verticalInterval,
+    GetDrawingGridLine? getDrawingVerticalLine,
+    CheckToShowGrid? checkToShowVerticalLine,
+  })  : show = show ?? true,
+        drawHorizontalLine = drawHorizontalLine ?? true,
+        getDrawingHorizontalLine = getDrawingHorizontalLine ?? defaultGridLine,
+        checkToShowHorizontalLine = checkToShowHorizontalLine ?? showAllGrids,
+        drawVerticalLine = drawVerticalLine ?? true,
+        getDrawingVerticalLine = getDrawingVerticalLine ?? defaultGridLine,
+        checkToShowVerticalLine = checkToShowVerticalLine ?? showAllGrids {
+    if (horizontalInterval == 0) {
+      throw ArgumentError("FlGridData.horizontalInterval couldn't be zero");
+    }
+    if (verticalInterval == 0) {
+      throw ArgumentError("FlGridData.verticalInterval couldn't be zero");
+    }
+  }
+
   /// Determines showing or hiding all horizontal and vertical lines.
   final bool show;
 
@@ -474,55 +513,6 @@ class FlGridData with EquatableMixin {
 
   /// Gives you a x value, and gets a boolean that determines showing or hiding specified line.
   final CheckToShowGrid checkToShowVerticalLine;
-
-  /// Responsible for rendering grid lines behind the content of charts,
-  /// [show] determines showing or hiding all grids,
-  ///
-  /// [AxisChartPainter] draws horizontal lines from left to right of the chart,
-  /// with increasing y value, it increases by [horizontalInterval].
-  /// Representation of each line determines by [getDrawingHorizontalLine] callback,
-  /// it gives you a double value (in the y axis), and you should return a [FlLine] that represents
-  /// a horizontal line.
-  /// You are allowed to show or hide any horizontal line, using [checkToShowHorizontalLine] callback,
-  /// it gives you a double value (in the y axis), and you should return a boolean that determines
-  /// showing or hiding specified line.
-  /// or you can hide all horizontal lines by setting [drawHorizontalLine] false.
-  ///
-  /// [AxisChartPainter] draws vertical lines from bottom to top of the chart,
-  /// with increasing x value, it increases by [verticalInterval].
-  /// Representation of each line determines by [getDrawingVerticalLine] callback,
-  /// it gives you a double value (in the x axis), and you should return a [FlLine] that represents
-  /// a horizontal line.
-  /// You are allowed to show or hide any vertical line, using [checkToShowVerticalLine] callback,
-  /// it gives you a double value (in the x axis), and you should return a boolean that determines
-  /// showing or hiding specified line.
-  /// or you can hide all vertical lines by setting [drawVerticalLine] false.
-  FlGridData({
-    bool? show,
-    bool? drawHorizontalLine,
-    double? horizontalInterval,
-    GetDrawingGridLine? getDrawingHorizontalLine,
-    CheckToShowGrid? checkToShowHorizontalLine,
-    bool? drawVerticalLine,
-    double? verticalInterval,
-    GetDrawingGridLine? getDrawingVerticalLine,
-    CheckToShowGrid? checkToShowVerticalLine,
-  })  : show = show ?? true,
-        drawHorizontalLine = drawHorizontalLine ?? true,
-        horizontalInterval = horizontalInterval,
-        getDrawingHorizontalLine = getDrawingHorizontalLine ?? defaultGridLine,
-        checkToShowHorizontalLine = checkToShowHorizontalLine ?? showAllGrids,
-        drawVerticalLine = drawVerticalLine ?? true,
-        verticalInterval = verticalInterval,
-        getDrawingVerticalLine = getDrawingVerticalLine ?? defaultGridLine,
-        checkToShowVerticalLine = checkToShowVerticalLine ?? showAllGrids {
-    if (horizontalInterval == 0) {
-      throw ArgumentError("FlGridData.horizontalInterval couldn't be zero");
-    }
-    if (verticalInterval == 0) {
-      throw ArgumentError("FlGridData.verticalInterval couldn't be zero");
-    }
-  }
 
   /// Lerps a [FlGridData] based on [t] value, check [Tween.lerp].
   static FlGridData lerp(FlGridData a, FlGridData b, double t) {
@@ -610,6 +600,19 @@ FlLine defaultGridLine(double value) {
 
 /// Defines style of a line.
 class FlLine with EquatableMixin {
+  /// Renders a line, color it by [color],
+  /// thickness is defined by [strokeWidth],
+  /// and if you want to have dashed line, you should fill [dashArray],
+  /// it is a circular array of dash offsets and lengths.
+  /// For example, the array `[5, 10]` would result in dashes 5 pixels long
+  /// followed by blank spaces 10 pixels long.
+  FlLine({
+    Color? color,
+    double? strokeWidth,
+    this.dashArray,
+  })  : color = color ?? Colors.black,
+        strokeWidth = strokeWidth ?? 2;
+
   /// Defines color of the line.
   final Color color;
 
@@ -622,20 +625,6 @@ class FlLine with EquatableMixin {
   /// For example, the array `[5, 10]` would result in dashes 5 pixels long
   /// followed by blank spaces 10 pixels long.
   final List<int>? dashArray;
-
-  /// Renders a line, color it by [color],
-  /// thickness is defined by [strokeWidth],
-  /// and if you want to have dashed line, you should fill [dashArray],
-  /// it is a circular array of dash offsets and lengths.
-  /// For example, the array `[5, 10]` would result in dashes 5 pixels long
-  /// followed by blank spaces 10 pixels long.
-  FlLine({
-    Color? color,
-    double? strokeWidth,
-    List<int>? dashArray,
-  })  : color = color ?? Colors.black,
-        strokeWidth = strokeWidth ?? 2,
-        dashArray = dashArray;
 
   /// Lerps a [FlLine] based on [t] value, check [Tween.lerp].
   static FlLine lerp(FlLine a, FlLine b, double t) {
@@ -671,6 +660,16 @@ class FlLine with EquatableMixin {
 
 /// holds information about touched spot on the axis based charts.
 abstract class TouchedSpot with EquatableMixin {
+  /// [spot]  represents the spot inside our axis based chart,
+  /// 0, 0 is bottom left, and 1, 1 is top right.
+  ///
+  /// [offset] is the touch position in device pixels,
+  /// 0, 0 is top, left, and 1, 1 is bottom right.
+  TouchedSpot(
+    this.spot,
+    this.offset,
+  );
+
   /// Represents the spot inside our axis based chart,
   /// 0, 0 is bottom left, and 1, 1 is top right.
   final FlSpot spot;
@@ -678,17 +677,6 @@ abstract class TouchedSpot with EquatableMixin {
   /// Represents the touch position in device pixels,
   /// 0, 0 is top, left, and 1, 1 is bottom right.
   final Offset offset;
-
-  /// [spot]  represents the spot inside our axis based chart,
-  /// 0, 0 is bottom left, and 1, 1 is top right.
-  ///
-  /// [offset] is the touch position in device pixels,
-  /// 0, 0 is top, left, and 1, 1 is bottom right.
-  TouchedSpot(
-    FlSpot spot,
-    Offset offset,
-  )   : spot = spot,
-        offset = offset;
 
   /// Used for equality check, see [EquatableMixin].
   @override
@@ -700,9 +688,6 @@ abstract class TouchedSpot with EquatableMixin {
 
 /// Holds data for rendering horizontal and vertical range annotations.
 class RangeAnnotations with EquatableMixin {
-  final List<HorizontalRangeAnnotation> horizontalRangeAnnotations;
-  final List<VerticalRangeAnnotation> verticalRangeAnnotations;
-
   /// Axis based charts can annotate some horizontal and vertical regions,
   /// using [horizontalRangeAnnotations], and [verticalRangeAnnotations] respectively.
   RangeAnnotations({
@@ -710,15 +695,26 @@ class RangeAnnotations with EquatableMixin {
     List<VerticalRangeAnnotation>? verticalRangeAnnotations,
   })  : horizontalRangeAnnotations = horizontalRangeAnnotations ?? const [],
         verticalRangeAnnotations = verticalRangeAnnotations ?? const [];
+  final List<HorizontalRangeAnnotation> horizontalRangeAnnotations;
+  final List<VerticalRangeAnnotation> verticalRangeAnnotations;
 
   /// Lerps a [RangeAnnotations] based on [t] value, check [Tween.lerp].
   static RangeAnnotations lerp(
-      RangeAnnotations a, RangeAnnotations b, double t) {
+    RangeAnnotations a,
+    RangeAnnotations b,
+    double t,
+  ) {
     return RangeAnnotations(
       horizontalRangeAnnotations: lerpHorizontalRangeAnnotationList(
-          a.horizontalRangeAnnotations, b.horizontalRangeAnnotations, t),
+        a.horizontalRangeAnnotations,
+        b.horizontalRangeAnnotations,
+        t,
+      ),
       verticalRangeAnnotations: lerpVerticalRangeAnnotationList(
-          a.verticalRangeAnnotations, b.verticalRangeAnnotations, t),
+        a.verticalRangeAnnotations,
+        b.verticalRangeAnnotations,
+        t,
+      ),
     );
   }
 
@@ -746,6 +742,14 @@ class RangeAnnotations with EquatableMixin {
 
 /// Defines an annotation region in y (vertical) axis.
 class HorizontalRangeAnnotation with EquatableMixin {
+  /// Annotates a horizontal region from most left to most right point of the chart, and
+  /// from [y1] to [y2], and fills the area with [color].
+  HorizontalRangeAnnotation({
+    required this.y1,
+    required this.y2,
+    Color? color,
+  }) : color = color ?? Colors.white;
+
   /// Determines starting point in vertical (y) axis.
   final double y1;
 
@@ -755,19 +759,12 @@ class HorizontalRangeAnnotation with EquatableMixin {
   /// Fills the area with this color.
   final Color color;
 
-  /// Annotates a horizontal region from most left to most right point of the chart, and
-  /// from [y1] to [y2], and fills the area with [color].
-  HorizontalRangeAnnotation({
-    required double y1,
-    required double y2,
-    Color? color,
-  })  : y1 = y1,
-        y2 = y2,
-        color = color ?? Colors.white;
-
   /// Lerps a [HorizontalRangeAnnotation] based on [t] value, check [Tween.lerp].
   static HorizontalRangeAnnotation lerp(
-      HorizontalRangeAnnotation a, HorizontalRangeAnnotation b, double t) {
+    HorizontalRangeAnnotation a,
+    HorizontalRangeAnnotation b,
+    double t,
+  ) {
     return HorizontalRangeAnnotation(
       y1: lerpDouble(a.y1, b.y1, t)!,
       y2: lerpDouble(a.y2, b.y2, t)!,
@@ -800,6 +797,14 @@ class HorizontalRangeAnnotation with EquatableMixin {
 
 /// Defines an annotation region in x (horizontal) axis.
 class VerticalRangeAnnotation with EquatableMixin {
+  /// Annotates a vertical region from most bottom to most top point of the chart, and
+  /// from [x1] to [x2], and fills the area with [color].
+  VerticalRangeAnnotation({
+    required this.x1,
+    required this.x2,
+    Color? color,
+  }) : color = color ?? Colors.white;
+
   /// Determines starting point in horizontal (x) axis.
   final double x1;
 
@@ -809,19 +814,12 @@ class VerticalRangeAnnotation with EquatableMixin {
   /// Fills the area with this color.
   final Color color;
 
-  /// Annotates a vertical region from most bottom to most top point of the chart, and
-  /// from [x1] to [x2], and fills the area with [color].
-  VerticalRangeAnnotation({
-    required double x1,
-    required double x2,
-    Color? color,
-  })  : x1 = x1,
-        x2 = x2,
-        color = color ?? Colors.white;
-
   /// Lerps a [VerticalRangeAnnotation] based on [t] value, check [Tween.lerp].
   static VerticalRangeAnnotation lerp(
-      VerticalRangeAnnotation a, VerticalRangeAnnotation b, double t) {
+    VerticalRangeAnnotation a,
+    VerticalRangeAnnotation b,
+    double t,
+  ) {
     return VerticalRangeAnnotation(
       x1: lerpDouble(a.x1, b.x1, t)!,
       x2: lerpDouble(a.x2, b.x2, t)!,
