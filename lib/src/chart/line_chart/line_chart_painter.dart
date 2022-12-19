@@ -54,15 +54,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       ..color = Colors.transparent
       ..strokeWidth = 1.0;
   }
-  late Paint _barPaint;
-  late Paint _barAreaPaint;
-  late Paint _barAreaLinesPaint;
-  late Paint _clearBarAreaPaint;
-  late Paint _extraLinesPaint;
-  late Paint _touchLinePaint;
-  late Paint _bgTouchTooltipPaint;
-  late Paint _imagePaint;
-  late Paint _borderTouchTooltipPaint;
 
   /// Paints [LineChartData] into the provided canvas.
   @override

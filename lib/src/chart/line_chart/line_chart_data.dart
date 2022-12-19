@@ -74,13 +74,13 @@ class LineChartData extends AxisChartData with EquatableMixin {
     FlClipData? clipData,
     super.backgroundColor,
   })  : lineBarsData = lineBarsData ?? const [],
+        extraLinesData = extraLinesData ?? ExtraLinesData(),
         betweenBarsData = betweenBarsData ?? const [],
         lineTouchData = lineTouchData ?? LineTouchData(),
         showingTooltipIndicators = showingTooltipIndicators ?? const [],
         super(
           gridData: gridData ?? FlGridData(),
           touchData: lineTouchData ?? LineTouchData(),
-          borderData: borderData,
           extraLinesData: extraLinesData,
           titlesData: titlesData ?? FlTitlesData(),
           rangeAnnotations: rangeAnnotations ?? RangeAnnotations(),
@@ -99,22 +99,8 @@ class LineChartData extends AxisChartData with EquatableMixin {
                   .maxY,
         );
 
-  /// [LineChart] draws some lines in various shapes and overlaps them.
-  final List<LineChartBarData> lineBarsData;
-
-  /// Fills area between two [LineChartBarData] with a color or gradient.
-  final List<BetweenBarsData> betweenBarsData;
-
   /// [LineChart] draws some horizontal or vertical lines on above or below of everything
   final ExtraLinesData extraLinesData;
-
-  /// Handles touch behaviors and responses.
-  final LineTouchData lineTouchData;
-
-  /// You can show some tooltipIndicators (a popup with an information)
-  /// on top of each [LineChartBarData.spots] using [showingTooltipIndicators],
-  /// just put line indicator number and spots indices you want to show it on top of them.
-  final List<ShowingTooltipIndicators> showingTooltipIndicators;
 
   /// Lerps a [BaseChartData] based on [t] value, check [Tween.lerp].
   @override

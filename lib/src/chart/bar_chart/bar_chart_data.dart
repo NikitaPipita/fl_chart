@@ -59,7 +59,6 @@ class BarChartData extends AxisChartData with EquatableMixin {
                 ),
               ),
           gridData: gridData ?? FlGridData(),
-          borderData: borderData,
           extraLinesData: extraLinesData,
           rangeAnnotations: rangeAnnotations ?? RangeAnnotations(),
           touchData: barTouchData ?? BarTouchData(),

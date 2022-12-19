@@ -31,11 +31,6 @@ abstract class AxisChartPainter<D extends AxisChartData>
 
     _imagePaint = Paint();
   }
-  late Paint _gridPaint;
-  late Paint _backgroundPaint;
-
-  /// [_rangeAnnotationPaint] draws range annotations;
-  late Paint _rangeAnnotationPaint;
 
   /// Paints [AxisChartData] into the provided canvas.
   @override
